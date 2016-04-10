@@ -7,6 +7,7 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"gopkg.in/redis.v3"
 
 	"github.com/golang/glog"
 )
@@ -80,6 +81,26 @@ func validateMatchConditions(mc *MatchConditions) error {
 
 // NewACLAuthorizer Creates a new static authorizer with ACL that have been read from the config file
 func NewACLAuthorizer(acl ACL) (Authorizer, error) {
+    // Read users with push permission from redis ("not-limit-users")
+    client := redis.NewClient(&redis.Options{
+            Addr: "redis:6379",
+            Password: "",
+            DB: 0,
+    })
+    notLimitUsers, err := client.SMembers("not-limit-users").Result()
+    if err !=  nil {
+            panic(err)
+    }
+    for _, user := range notLimitUsers {
+        act := []string{"push"}
+        x := acl[0]
+        firstAcl := x
+        m := MatchConditions{Account: sp(user)}
+        firstAcl.Match = &m
+        firstAcl.Actions = &act
+        acl = append(acl, firstAcl)
+    }
+    // END. Read users with push permission from redis ("not-limit-users")
 	for i, e := range acl {
 		err := validateMatchConditions(e.Match)
 		if err != nil {
