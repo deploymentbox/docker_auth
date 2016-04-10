@@ -79,6 +79,10 @@ func validateMatchConditions(mc *MatchConditions) error {
 	return nil
 }
 
+func sp(s string) *string {
+    return &s
+}
+
 // NewACLAuthorizer Creates a new static authorizer with ACL that have been read from the config file
 func NewACLAuthorizer(acl ACL) (Authorizer, error) {
     // Read users with push permission from redis ("not-limit-users")
