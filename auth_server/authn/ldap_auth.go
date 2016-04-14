@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+    "os"
 
 	"github.com/go-ldap/ldap"
 	"github.com/golang/glog"
