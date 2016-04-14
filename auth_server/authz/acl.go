@@ -95,24 +95,27 @@ func NewACLAuthorizer(acl ACL) (Authorizer, error) {
     if err !=  nil {
             panic(err)
     }
+    var aclNew []ACLEntry
     for _, user := range notLimitUsers {
-        act := []string{"push"}
+        act := []string{"*"}
         x := acl[0]
         firstAcl := x
         m := MatchConditions{Account: sp(user)}
         firstAcl.Match = &m
         firstAcl.Actions = &act
-        acl = append(acl, firstAcl)
+        aclNew = append(aclNew, firstAcl)
     }
+    aclNew = append(aclNew, acl[0])
     // END. Read users with push permission from redis ("not-limit-users")
-	for i, e := range acl {
+	for i, e := range aclNew {
+fmt.Printf("%v\n", e)
 		err := validateMatchConditions(e.Match)
 		if err != nil {
 			return nil, fmt.Errorf("entry %d, invalid match conditions: %s", i, err)
 		}
 	}
-	glog.V(1).Infof("Created ACL Authorizer with %d entries", len(acl))
-	return &aclAuthorizer{acl: acl}, nil
+	glog.V(1).Infof("Created ACL Authorizer with %d entries", len(aclNew))
+	return &aclAuthorizer{acl: aclNew}, nil
 }
 
 func (aa *aclAuthorizer) Authorize(ai *AuthRequestInfo) ([]string, error) {

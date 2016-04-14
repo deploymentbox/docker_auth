@@ -86,6 +86,9 @@ func (la *LDAPAuth) Authenticate(account string, password PasswordString) (bool,
 	if bindErr := la.bindReadOnlyUser(l); bindErr != nil {
 		return false, bindErr
 	}
+    // Create folder for the repository of the account
+    os.Mkdir("/registry/docker/registry/v2/repositories/" + account, 0755)
+    // END Create folder for the repository of the account
 
 	return true, nil
 }
