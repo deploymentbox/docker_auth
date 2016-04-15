@@ -14,6 +14,8 @@ import (
 	"github.com/golang/glog"
 )
 
+const addrRedis = "redis:6379"
+
 type ACL []ACLEntry
 
 type ACLEntry struct {
@@ -93,7 +95,7 @@ func NewACLAuthorizer(acl ACL) (Authorizer, error) {
     err := errors.New("error")
     for err != nil {
         client = redis.NewClient(&redis.Options{
-            Addr: "redisalpine:6379",
+            Addr: addrRedis,
             Password: "",
             DB: 0,
 
