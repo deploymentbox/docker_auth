@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strings"
 	"gopkg.in/redis.v3"
+    "errors"
+    "time"
 
 	"github.com/golang/glog"
 )
@@ -86,6 +88,22 @@ func sp(s string) *string {
 // NewACLAuthorizer Creates a new static authorizer with ACL that have been read from the config file
 func NewACLAuthorizer(acl ACL) (Authorizer, error) {
     // Read users with push permission from redis ("not-limit-users")
+    var notLimitUsers []string
+    err := errors.New("error")
+    for err != nil {
+        client := redis.NewClient(&redis.Options{
+            Addr: "redis:6379",
+            Password: "",
+            DB: 0,
+
+        })
+        notLimitUsers, err = client.SMembers("not-limit-users").Result()
+        if err !=  nil {
+            fmt.Print("Trying connect redis")
+            time.Sleep(20 * time.Second)
+        }
+    }
+
     client := redis.NewClient(&redis.Options{
             Addr: "redis:6379",
             Password: "",
