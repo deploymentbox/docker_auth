@@ -89,30 +89,27 @@ func sp(s string) *string {
 func NewACLAuthorizer(acl ACL) (Authorizer, error) {
     // Read users with push permission from redis ("not-limit-users")
     var notLimitUsers []string
+    var client *redis.Client
     err := errors.New("error")
     for err != nil {
-        client := redis.NewClient(&redis.Options{
-            Addr: "redis:6379",
+        client = redis.NewClient(&redis.Options{
+            Addr: "redisalpine:6379",
             Password: "",
             DB: 0,
 
         })
-        notLimitUsers, err = client.SMembers("not-limit-users").Result()
+        pong, err := client.Ping().Result()
         if err !=  nil {
+            fmt.Print(pong, err)
             fmt.Print("Trying connect redis")
             time.Sleep(20 * time.Second)
         }
     }
-
-    client := redis.NewClient(&redis.Options{
-            Addr: "redis:6379",
-            Password: "",
-            DB: 0,
-    })
-    notLimitUsers, err := client.SMembers("not-limit-users").Result()
+    notLimitUsers, err = client.SMembers("not-limit-users").Result()
     if err !=  nil {
-            panic(err)
+        panic(err)
     }
+
     var aclNew []ACLEntry
     for _, user := range notLimitUsers {
         act := []string{"*"}
