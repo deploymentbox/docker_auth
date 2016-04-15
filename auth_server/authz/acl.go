@@ -103,6 +103,8 @@ func NewACLAuthorizer(acl ACL) (Authorizer, error) {
             fmt.Print(pong, err)
             fmt.Print("Trying connect redis")
             time.Sleep(20 * time.Second)
+        } else {
+            break
         }
     }
     notLimitUsers, err = client.SMembers("not-limit-users").Result()
