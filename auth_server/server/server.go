@@ -46,7 +46,7 @@ func NewAuthServer(c *Config) (*AuthServer, error) {
 		authorizers: []authz.Authorizer{},
 	}
 	if c.ACL != nil {
-		staticAuthorizer, err := authz.NewACLAuthorizer(c.ACL)
+		staticAuthorizer, err := authz.NewACLAuthorizer(c.ACL, c.Redis)
 		if err != nil {
 			return nil, err
 		}

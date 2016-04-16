@@ -179,7 +179,7 @@ func (ma *aclMongoAuthorizer) updateACLCache() error {
 		retACL = append(retACL, e.ACLEntry)
 	}
 
-	newStaticAuthorizer, err := NewACLAuthorizer(retACL)
+	newStaticAuthorizer, err := NewACLAuthorizer(retACL, nil)
 	if err != nil {
 		return err
 	}

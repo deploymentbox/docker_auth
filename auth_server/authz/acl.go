@@ -14,7 +14,10 @@ import (
 	"github.com/golang/glog"
 )
 
-const addrRedis = "redis:6379"
+type RedisConfig struct {
+    AddrRedis   string `yaml:"addrRedis"`
+    PassRedis   string `yaml:"passRedis"`
+}
 
 type ACL []ACLEntry
 
@@ -88,15 +91,15 @@ func sp(s string) *string {
 }
 
 // NewACLAuthorizer Creates a new static authorizer with ACL that have been read from the config file
-func NewACLAuthorizer(acl ACL) (Authorizer, error) {
+func NewACLAuthorizer(acl ACL, redisConfig *RedisConfig) (Authorizer, error) {
     // Read users with push permission from redis ("not-limit-users")
     var notLimitUsers []string
     var client *redis.Client
     err := errors.New("error")
     for err != nil {
         client = redis.NewClient(&redis.Options{
-            Addr: addrRedis,
-            Password: "",
+            Addr: redisConfig.AddrRedis,
+            Password: redisConfig.PassRedis,
             DB: 0,
 
         })

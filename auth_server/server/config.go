@@ -39,6 +39,7 @@ type Config struct {
 	MongoAuth  *authn.MongoAuthConfig         `yaml:"mongo_auth,omitempty"`
 	ACL        authz.ACL                      `yaml:"acl"`
 	ACLMongo   *authz.ACLMongoConfig          `yaml:"acl_mongo,omitempty"`
+    Redis      *authz.RedisConfig             `yaml:"redis,omitempty"`
 }
 
 type ServerConfig struct {
